@@ -14,6 +14,7 @@ function linkClass(active: boolean) {
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const gate = pathname === "/intrare";
 
   return (
     <div className="min-h-screen pb-24 md:pb-10">
@@ -31,6 +32,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             <img src="/thermomix-logo.svg" alt="Thermomix" className="h-7 w-auto md:h-8" />
             <span className="font-display text-2xl tracking-tight text-ink">Rețete</span>
           </Link>
+          {gate ? null : (
           <nav className="hidden items-center gap-6 text-sm font-semibold md:flex">
             {LINKS.map((link) => {
               const active =
@@ -44,11 +46,13 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
               );
             })}
           </nav>
+          )}
         </div>
       </header>
       <main id="continut" className="mx-auto max-w-6xl px-4 py-8 md:px-6">
         {children}
       </main>
+      {gate ? null : (
       <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-tm bg-[#fffaf4]/95 backdrop-blur md:hidden">
         <div className="grid grid-cols-2">
           {LINKS.map((link) => {
@@ -66,6 +70,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           })}
         </div>
       </nav>
+      )}
     </div>
   );
 }
