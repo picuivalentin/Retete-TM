@@ -1,8 +1,8 @@
 export const ACCESS_COOKIE = "tm_access";
 const MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 
-function accessSecret() {
-  return process.env.SITE_PASSWORD || process.env.ADMIN_PASSWORD || "";
+function signingSecret() {
+  return process.env.ADMIN_PASSWORD || process.env.SITE_PASSWORD || "";
 }
 
 function acceptedPasswords() {
@@ -32,7 +32,7 @@ function sameBytes(actual: Uint8Array, expected: Uint8Array) {
 async function signature(payload: string) {
   const key = await crypto.subtle.importKey(
     "raw",
-    await sha256(accessSecret()),
+    await sha256(signingSecret()),
     { name: "HMAC", hash: "SHA-256" },
     false,
     ["sign"],
@@ -68,7 +68,7 @@ export async function createAccessToken() {
 }
 
 export async function verifyAccessToken(token: string | undefined) {
-  if (!token || !accessSecret()) return false;
+  if (!token || !signingSecret()) return false;
   const match = /^access\.(\d+)\.([A-Za-z0-9_-]+)$/.exec(token);
   if (!match) return false;
   const exp = Number(match[1]);

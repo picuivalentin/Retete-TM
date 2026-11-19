@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CATEGORIES } from "@/lib/categories";
 import { type Recipe } from "@/lib/types";
@@ -168,9 +169,14 @@ export function AdminConsole() {
           <h1 className="font-display text-4xl tracking-tight md:text-5xl">Import</h1>
           <p className="mt-2 text-ink-soft">Un link Cookidoo pe linie, sau mai multe în același text.</p>
         </div>
-        <button type="button" onClick={logout} className="text-sm font-semibold text-ink-soft hover:text-ink">
-          Ieși
-        </button>
+        <div className="flex flex-wrap items-center gap-4">
+          <Link href="/admin/ordine" className="text-sm font-semibold text-tm">
+            Ordinea rețetelor
+          </Link>
+          <button type="button" onClick={logout} className="text-sm font-semibold text-ink-soft hover:text-ink">
+            Ieși
+          </button>
+        </div>
       </div>
 
       <form onSubmit={importLinks} className="rounded-[28px] border border-[#eadfce] bg-card p-5 md:p-7">

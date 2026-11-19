@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm";
+import { asc, desc, eq, min } from "drizzle-orm";
 import { categorize } from "@/lib/categorize";
 import { type CookidooLink, fetchCookidooRecipe, fullImageUrl } from "@/lib/cookidoo";
 import { db, ensureSchema, recipes } from "@/lib/db";
@@ -32,6 +32,7 @@ function toRecipe(row: RecipeRow): Recipe {
     category: row.category,
     categoryLocked: row.categoryLocked === 1,
     note: row.note,
+    sortOrder: row.sortOrder,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   };
@@ -39,7 +40,10 @@ function toRecipe(row: RecipeRow): Recipe {
 
 export async function listRecipes() {
   await ensureSchema();
-  const rows = await db().select().from(recipes).orderBy(desc(recipes.createdAt));
+  const rows = await db()
+    .select()
+    .from(recipes)
+    .orderBy(asc(recipes.sortOrder), desc(recipes.createdAt));
   return rows.map(toRecipe);
 }
 
@@ -90,12 +94,14 @@ export async function importCookidooLink(link: CookidooLink) {
     return { recipe: saved!, updated: true };
   }
 
+  const [lowest] = await db().select({ value: min(recipes.sortOrder) }).from(recipes);
   await db().insert(recipes).values({
     id: link.id,
     ...shared,
     category,
     categoryLocked: 0,
     note: "",
+    sortOrder: lowest?.value == null ? 0 : lowest.value - 1,
     createdAt: now,
   });
   const saved = await getRecipe(link.id);
@@ -126,6 +132,22 @@ export async function updateRecipe(
     })
     .where(eq(recipes.id, id));
   return getRecipe(id);
+}
+
+export async function reorderRecipes(ids: string[]) {
+  await ensureSchema();
+  const existing = await db().select({ id: recipes.id }).from(recipes).orderBy(asc(recipes.sortOrder));
+  const known = new Set(existing.map((row) => row.id));
+  const ordered = [...new Set(ids)].filter((id) => known.has(id));
+  for (const row of existing) {
+    if (!ordered.includes(row.id)) ordered.push(row.id);
+  }
+
+  await db().transaction(async (tx) => {
+    for (let index = 0; index < ordered.length; index += 1) {
+      await tx.update(recipes).set({ sortOrder: index }).where(eq(recipes.id, ordered[index]));
+    }
+  });
 }
 
 export async function deleteRecipe(id: string) {

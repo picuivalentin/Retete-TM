@@ -14,6 +14,7 @@ export type Recipe = {
   category: string;
   categoryLocked: boolean;
   note: string;
+  sortOrder: number;
   createdAt: number;
   updatedAt: number;
 };

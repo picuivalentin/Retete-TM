@@ -16,6 +16,7 @@ const TIME_OPTIONS = [
 ];
 
 const SORT_OPTIONS = [
+  { id: "ordine", label: "Ordinea mea" },
   { id: "data", label: "După dată" },
   { id: "nume", label: "După nume" },
 ];
@@ -35,7 +36,7 @@ export function Gallery({ recipes }: { recipes: Recipe[] }) {
   const [category, setCategory] = useState("Toate");
   const [time, setTime] = useState("all");
   const [tool, setTool] = useState("toate");
-  const [sort, setSort] = useState("data");
+  const [sort, setSort] = useState("ordine");
 
   const tools = useMemo(() => {
     const names = new Set<string>();
@@ -65,7 +66,8 @@ export function Gallery({ recipes }: { recipes: Recipe[] }) {
       if (sort === "nume") {
         return a.title.localeCompare(b.title, "ro", { sensitivity: "base" });
       }
-      return b.createdAt - a.createdAt;
+      if (sort === "data") return b.createdAt - a.createdAt;
+      return a.sortOrder - b.sortOrder;
     });
   }, [recipes, query, category, time, tool, sort]);
 
@@ -96,7 +98,7 @@ export function Gallery({ recipes }: { recipes: Recipe[] }) {
         </div>
       </div>
 
-      <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_12.5rem_15rem_12.5rem]">
+      <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_12.5rem_15rem_14rem]">
         <label className="block">
           <span className="sr-only">Caută</span>
           <input
