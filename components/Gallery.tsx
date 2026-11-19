@@ -89,7 +89,7 @@ export function Gallery({ recipes }: { recipes: Recipe[] }) {
     <div>
       <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="font-display text-4xl tracking-tight md:text-5xl">Rețete</h1>
+          <h1 className="font-display text-4xl tracking-tight md:text-5xl">Rețete Thermomix</h1>
           <p className="mt-2 text-ink-soft">
             {visible.length === recipes.length
               ? `${recipes.length} ${recipes.length === 1 ? "rețetă" : "rețete"}`

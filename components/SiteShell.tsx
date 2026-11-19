@@ -30,7 +30,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             {/* Local copy of the official wordmark. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/thermomix-logo.svg" alt="Thermomix" className="h-7 w-auto md:h-8" />
-            <span className="font-display text-2xl tracking-tight text-ink">Rețete</span>
+            <span className="font-display text-2xl tracking-tight text-ink">Rețete Thermomix</span>
           </Link>
           {gate ? null : (
           <nav className="hidden items-center gap-6 text-sm font-semibold md:flex">

@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     default: "Rețete Thermomix",
     template: "%s · Rețete Thermomix",
   },
-  description: "Rețete Thermomix cu poze mari, categorii și listă de cumpărături.",
+  description: "Rețete Thermomix - create cu pasiune.",
   robots: { index: false, follow: false },
 };
 
