@@ -1,7 +1,9 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useRef, useState } from "react";
+
+const SLOW_MS = 5000;
 
 function nextPath(value: string | null) {
   if (!value || !value.startsWith("/") || value.startsWith("//")) return "/";
@@ -9,29 +11,48 @@ function nextPath(value: string | null) {
 }
 
 function GateForm() {
-  const router = useRouter();
   const params = useSearchParams();
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
+  const attempt = useRef(0);
+
+  useEffect(() => {
+    if (!pending) return;
+    const current = attempt.current;
+    const timer = window.setTimeout(() => {
+      if (current !== attempt.current) return;
+      setPending(false);
+      setError("Durează prea mult. Apasă Intră din nou.");
+    }, SLOW_MS);
+    return () => window.clearTimeout(timer);
+  }, [pending]);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
+    const current = attempt.current + 1;
+    attempt.current = current;
     setPending(true);
     setError("");
-    const response = await fetch("/api/acces", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
-    });
-    if (!response.ok) {
-      const body = (await response.json().catch(() => null)) as { error?: string } | null;
-      setError(body?.error || "Parolă greșită");
+    try {
+      const response = await fetch("/api/acces", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      if (current !== attempt.current) return;
+      if (!response.ok) {
+        const body = (await response.json().catch(() => null)) as { error?: string } | null;
+        setError(body?.error || "Parolă greșită");
+        setPending(false);
+        return;
+      }
+      window.location.assign(nextPath(params.get("next")));
+    } catch {
+      if (current !== attempt.current) return;
+      setError("Nu s-a putut verifica parola. Apasă Intră din nou.");
       setPending(false);
-      return;
     }
-    router.push(nextPath(params.get("next")));
-    router.refresh();
   }
 
   return (
@@ -59,9 +80,19 @@ function GateForm() {
       <button
         type="submit"
         disabled={pending}
-        className="mt-5 rounded-full bg-terracotta px-5 py-3 font-semibold text-white disabled:opacity-60"
+        className="mt-5 inline-flex min-w-28 items-center justify-center gap-2 rounded-full bg-terracotta px-5 py-3 font-semibold text-white disabled:opacity-70"
       >
-        Intră
+        {pending ? (
+          <>
+            <span
+              className="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
+              aria-hidden="true"
+            />
+            Se verifică…
+          </>
+        ) : (
+          "Intră"
+        )}
       </button>
     </form>
   );
