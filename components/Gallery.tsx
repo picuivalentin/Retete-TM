@@ -177,30 +177,40 @@ export function Gallery({ recipes }: { recipes: Recipe[] }) {
         <ul className="mt-6 grid auto-rows-fr gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {visible.map((recipe) => (
             <li key={recipe.id} className="h-full">
-              <Link
-                href={`/reteta/${recipe.id}`}
-                className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-[#eadfce] bg-card shadow-[0_20px_50px_-36px_rgba(36,28,22,0.8)]"
-              >
-                <RecipeImage
-                  src={recipe.imageUrl}
-                  alt={recipe.title}
-                  className="aspect-square w-full shrink-0 object-cover"
-                />
-                <div className="flex flex-1 flex-col gap-3 p-5">
-                  <div className="flex h-7 items-center gap-2">
-                    <span className="rounded-full bg-cream-deep px-3 py-1 text-xs font-semibold uppercase tracking-wide text-ink">
-                      {recipe.category}
-                    </span>
+              <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-[#eadfce] bg-card shadow-[0_20px_50px_-36px_rgba(36,28,22,0.8)]">
+                <Link
+                  href={`/reteta/${recipe.id}`}
+                  className="group flex flex-1 flex-col"
+                >
+                  <RecipeImage
+                    src={recipe.imageUrl}
+                    alt={recipe.title}
+                    className="aspect-square w-full shrink-0 object-cover"
+                  />
+                  <div className="flex flex-1 flex-col gap-3 p-5">
+                    <div className="flex h-7 items-center gap-2">
+                      <span className="rounded-full bg-cream-deep px-3 py-1 text-xs font-semibold uppercase tracking-wide text-ink">
+                        {recipe.category}
+                      </span>
+                    </div>
+                    <h2 className="line-clamp-2 min-h-[3.75rem] font-display text-2xl leading-tight tracking-tight group-hover:text-terracotta-deep">
+                      {recipe.title}
+                    </h2>
+                    <p className="text-sm text-ink-soft">{metaLine(recipe) || "Cookidoo"}</p>
+                    <p className="mt-auto text-sm font-semibold text-tm">
+                      {recipe.tools.join(" · ")}
+                    </p>
                   </div>
-                  <h2 className="line-clamp-2 min-h-[3.75rem] font-display text-2xl leading-tight tracking-tight group-hover:text-terracotta-deep">
-                    {recipe.title}
-                  </h2>
-                  <p className="text-sm text-ink-soft">{metaLine(recipe) || "Cookidoo"}</p>
-                  <p className="mt-auto text-sm font-semibold text-tm">
-                    {recipe.tools.join(" · ")}
-                  </p>
-                </div>
-              </Link>
+                </Link>
+                <a
+                  href={recipe.sourceUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mx-5 mb-5 flex justify-center rounded-full bg-terracotta px-4 py-2.5 text-sm font-semibold text-white"
+                >
+                  Deschide pe Cookidoo
+                </a>
+              </article>
             </li>
           ))}
         </ul>
