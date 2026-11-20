@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const LINKS = [
   { href: "/", label: "Rețete" },
   { href: "/cumparaturi", label: "Cumpărături" },
+  { href: "/tutorial", label: "Tutorial" },
 ];
 
 function linkClass(active: boolean) {
@@ -54,7 +55,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       </main>
       {gate ? null : (
       <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-tm bg-[#fffaf4]/95 backdrop-blur md:hidden">
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-3">
           {LINKS.map((link) => {
             const active =
               link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
